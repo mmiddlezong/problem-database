@@ -2,7 +2,7 @@
 
 ## Idea
 
-This is a math contest problem database. The database contains many math problems which each have a rating. Each user also has a rating. The purpose of the rating is to feed a continuous stream of problems that are the correct difficulty for the user, much like chess puzzles. When a user faces a problem, whether or not they solve it will adjust the rating of both the user and the problem according to an ELO system.
+This is a math contest problem database. The database contains many math problems which each have a rating. Each user also has a rating. The purpose of the rating is to feed a continuous stream of problems (in LaTeX) that are the correct difficulty for the user, much like chess puzzles. When a user faces a problem, whether or not they solve it will adjust the rating of both the user and the problem according to an ELO system.
 
 ## Commands
 - `npm run dev` - Start development server with Turbopack
