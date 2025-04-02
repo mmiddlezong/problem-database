@@ -74,3 +74,11 @@ CREATE TABLE rating_history (
 - One challenge is to actually create the database of problems, which I can probably accomplish with web scraping
 - Authentication and authorization is always difficult, but I will probably use Auth.js
 - Dealing with images in the problems and solutions is going to be difficult
+
+# Sprints
+
+## Sprint 1
+
+For Sprint 1, I want to set up the backend database and populate it with some amount of problems. This means I have
+to decide on and finalize my database schema, host the database, and attach an ORM like Drizzle. If I have time, I want
+to end with some Next.js server actions or API endpoints that can actually interact with this backend.
