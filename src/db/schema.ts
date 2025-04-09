@@ -88,13 +88,11 @@ export const authenticators = pgTable(
 
 export const problems = pgTable("problems", {
     id: uuid("id").primaryKey().defaultRandom(),
-    source: varchar("source", { length: 255 }).notNull(),
+    source: varchar("source", { length: 255 }),
     hyperlink: varchar("hyperlink", { length: 255 }),
     keyphrase: varchar("keyphrase", { length: 255 }),
-    content: text("content").notNull(), // LaTeX formatted
-    solution: text("solution").notNull(), // LaTeX formatted solution
-    answer: text("answer").notNull(),
-    remark: text("remark"), // LaTeX formatted
+    contentPath: varchar("content_path", { length: 255 }).notNull(), // Path to TeX file in storage bucket
+    answer: text("answer"), // For automatic grading purposes (optional)
     rating: integer("rating").default(1200),
     author: varchar("author", { length: 255 }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
