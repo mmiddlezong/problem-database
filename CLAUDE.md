@@ -1,3 +1,7 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # Project Commands & Guidelines
 
 ## Idea
@@ -10,6 +14,20 @@ This is a math contest problem database. The database contains many math problem
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
 - `npx next test <path>` - Run a specific test
+- `npx drizzle-kit push` - Push schema to database
+
+## Database
+- **ORM**: Uses Drizzle ORM with PostgreSQL
+- **Schema**: Located in `src/db/schema.ts`
+- **Tables**: Users, accounts, sessions, verification tokens, problems, problem attempts, rating history
+- **Connection**: Uses `postgres.js` client configured via `DATABASE_URL` environment variable
+- **Adapter**: Uses `@auth/drizzle-adapter` for NextAuth integration
+
+## Authentication
+- **Framework**: NextAuth.js v5 (Beta) with JWT session strategy
+- **Providers**: Google OAuth
+- **Protection**: Uses Next.js middleware for route protection
+- **Components**: Sign-in component uses server actions to initiate auth flow
 
 ## Code Style
 - **Imports**: Use absolute imports with `@/*` path alias for src directory
