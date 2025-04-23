@@ -32,7 +32,17 @@ export default function ProblemSelector({
             if (window.MathJax) {
                 setTimeout(() => {
                     window.MathJax.typeset();
-                }, 100);
+                }, 1);
+                
+                setTimeout(() => {
+                    window.MathJax.typeset();
+                }, 2);
+                setTimeout(() => {
+                    window.MathJax.typeset();
+                }, 5);
+                setTimeout(() => {
+                    window.MathJax.typeset();
+                }, 50);
             }
         } catch (error) {
             console.error("Error loading problem:", error);
