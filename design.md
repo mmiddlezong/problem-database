@@ -85,3 +85,5 @@ to decide on and finalize my database schema, host the database, and attach an O
 to end with some Next.js server actions or API endpoints that can actually interact with this backend.
 
 ### Result
+I was able to meet the goals, but midway through I increased the scope of the project by deciding to use
+file storage for the storage of problems, which is more flexible and friendly with LaTeX.
