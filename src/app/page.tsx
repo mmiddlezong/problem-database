@@ -4,7 +4,7 @@ import ProblemSelector from "./components/problem-selector-client";
 
 async function getProblemTex(problemId = "p1") {
     try {
-        const response = await fetch(`http://localhost:3002/api/tex/${problemId}`);
+        const response = await fetch(`http://localhost:3002/api/tex/${problemId}/problem`);
         if (!response.ok) {
             throw new Error(`Failed to fetch problem: ${response.status}`);
         }
