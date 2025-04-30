@@ -1,31 +1,25 @@
 import MathJaxProvider from "./components/mathjax-provider";
 import SignIn from "./components/sign-in";
-import ProblemSelector from "./components/problem-selector-client";
+import ProblemSelector from "./components/problem-selector";
+import { getProblemTex } from "@/utils/problem-utils";
+import { db } from "@/db/drizzle";
+import { problems } from "@/db/schema";
 
-async function getProblemTex(problemId = "p1") {
-    try {
-        const response = await fetch(`http://localhost:3002/api/tex/${problemId}/problem`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch problem: ${response.status}`);
-        }
-        const data = await response.json();
-        return data.content;
-    } catch (error) {
-        console.error("Error fetching problem:", error);
-        return "Error loading problem.";
-    }
-}
-
+/**
+ * Gets all available problems from the database
+ * @returns An array of problem content paths (filenames)
+ */
 async function getAvailableProblems() {
     try {
-        const response = await fetch("http://localhost:3002/api/tex");
-        if (!response.ok) {
-            throw new Error(`Failed to fetch problems list: ${response.status}`);
-        }
-        const data = await response.json();
-        return data.files || [];
+        // Query the database for all problems, returning only the contentPath field
+        const result = await db.select({ path: problems.contentPath })
+            .from(problems)
+            .orderBy(problems.createdAt);
+        
+        // Extract the contentPath values into a string array
+        return result.map(problem => problem.path);
     } catch (error) {
-        console.error("Error fetching problems list:", error);
+        console.error("Error fetching problems from database:", error);
         return [];
     }
 }
