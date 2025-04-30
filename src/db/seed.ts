@@ -22,12 +22,19 @@ async function fetchAllTexFiles() {
   }
 }
 
-async function fetchTexMetadata(filename: string) {
+async function fetchTexMetadata(filePath: string) {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/tex/${filename}`);
+    const response = await fetch(`${API_BASE_URL}/api/tex`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ filePath: filePath })
+    });
+    
     return response.json();
   } catch (error) {
-    console.error(`Error fetching metadata for ${filename}:`, error);
+    console.error(`Error fetching metadata for ${filePath}:`, error);
     return null;
   }
 }
@@ -46,33 +53,39 @@ async function main() {
     console.log(`Found ${texFiles.length} TeX files to import`);
 
     // Step 2: Process each file and create problem entries
-    for (const filename of texFiles) {
+    for (const filePath of texFiles) {
       
       // Fetch metadata from API
-      const metadata = await fetchTexMetadata(filename);
+      const metadata = await fetchTexMetadata(filePath);
       
       if (!metadata) {
-        console.error(`Failed to fetch metadata for ${filename}, skipping...`);
+        console.error(`Failed to fetch metadata for ${filePath}, skipping...`);
         continue;
       }
       
       // Extract fields from metadata
       const { source, author, hyperlink, answer, keyphrase, format } = metadata;
       
-      // Insert problem into database
-      await db.insert(problems).values({
+      // Create values object for insertion
+      const problemValues = {
         source: source || null,
         hyperlink: hyperlink || null,
         keyphrase: keyphrase || null, // Use keyphrase from metadata or null
-        contentPath: filename, // Store filename as content path
+        contentPath: filePath, // Store filePath as content path
         format: format || "short-answer", // Use format from metadata or default to short-answer
         answer: answer || null,
         rating: 1200, // Default rating
         author: author || null,
         createdAt: new Date(),
-      });
+      };
       
-      console.log(`Imported problem: ${filename}`);
+      // Print values for debugging
+      console.log(`Problem values for ${filePath}:`, JSON.stringify(problemValues, null, 2));
+      
+      // Insert problem into database
+      await db.insert(problems).values(problemValues);
+      
+      console.log(`Imported problem: ${filePath}`);
     }
 
     console.log("Database seed completed successfully!");

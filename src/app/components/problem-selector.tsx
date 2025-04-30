@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import { processLatexContent } from "@/utils/problem-utils";
 
 interface ProblemSelectorProps {
     problems: string[];
@@ -11,6 +12,7 @@ export default function ProblemSelector({
     problems,
     initialProblemTex
 }: ProblemSelectorProps) {
+    // Make sure initial problem text has paragraph formatting
     const [problemTex, setProblemTex] = useState(initialProblemTex);
     const [selectedProblem, setSelectedProblem] = useState('p1');
 
@@ -21,28 +23,43 @@ export default function ProblemSelector({
         if (!problemId) return;
         
         try {
-            const response = await fetch(`http://localhost:3002/api/tex/${problemId}/problem`);
+            const response = await fetch(`http://localhost:3002/api/tex/problem`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ filePath: problemId })
+            });
+            
             if (!response.ok) {
                 throw new Error(`Failed to fetch problem: ${response.status}`);
             }
             const data = await response.json();
-            setProblemTex(data.content);
+            
+            // Process the content to handle paragraph breaks properly
+            const processedContent = processLatexContent(data.problem);
+            setProblemTex(processedContent);
             
             // Force MathJax to re-render
             if (window.MathJax) {
                 setTimeout(() => {
                     window.MathJax.typeset();
                 }, 1);
-                
                 setTimeout(() => {
                     window.MathJax.typeset();
                 }, 2);
                 setTimeout(() => {
                     window.MathJax.typeset();
-                }, 5);
+                }, 4);
                 setTimeout(() => {
                     window.MathJax.typeset();
-                }, 50);
+                }, 8);
+                setTimeout(() => {
+                    window.MathJax.typeset();
+                }, 16);
+                setTimeout(() => {
+                    window.MathJax.typeset();
+                }, 32);
             }
         } catch (error) {
             console.error("Error loading problem:", error);
