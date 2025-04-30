@@ -1,5 +1,8 @@
-import { boolean, timestamp, pgTable, text, primaryKey, integer, uuid, varchar } from "drizzle-orm/pg-core";
+import { boolean, timestamp, pgTable, text, primaryKey, integer, uuid, varchar, pgEnum } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
+
+// Problem format enum
+export const problemFormatEnum = pgEnum("problem_format", ["short-answer", "proof", "multiple-choice"]);
 
 export const users = pgTable("users", {
     id: text("id")
@@ -92,6 +95,7 @@ export const problems = pgTable("problems", {
     hyperlink: varchar("hyperlink", { length: 255 }),
     keyphrase: varchar("keyphrase", { length: 255 }),
     contentPath: varchar("content_path", { length: 255 }).notNull(), // Path to TeX file in storage bucket
+    format: problemFormatEnum("format").notNull(), // Problem format (short-answer, proof, or multiple-choice)
     answer: text("answer"), // For automatic grading purposes (optional)
     rating: integer("rating").default(1200),
     author: varchar("author", { length: 255 }),

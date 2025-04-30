@@ -1,7 +1,6 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { problems } from "./schema";
-import { eq } from "drizzle-orm";
 import "@/../envConfig"
 
 // Set up database connection specifically for the seed script
@@ -37,19 +36,17 @@ async function main() {
   console.log("Starting database seed...");
 
   try {
+    // Step 0: Wipe the existing problems table
+    console.log("Clearing existing problems from database...");
+    await db.delete(problems);
+    console.log("Problems table cleared successfully.");
+
     // Step 1: Get list of all available TeX files
     const texFiles = await fetchAllTexFiles();
     console.log(`Found ${texFiles.length} TeX files to import`);
 
     // Step 2: Process each file and create problem entries
     for (const filename of texFiles) {
-      // Skip processing if we already have this file (using the filename as keyphrase)
-      const existingProblem = await db.select().from(problems).where(eq(problems.keyphrase, filename)).limit(1);
-      
-      if (existingProblem.length > 0) {
-        console.log(`Problem ${filename} already exists, skipping...`);
-        continue;
-      }
       
       // Fetch metadata from API
       const metadata = await fetchTexMetadata(filename);
@@ -60,7 +57,7 @@ async function main() {
       }
       
       // Extract fields from metadata
-      const { source, author, hyperlink, answer, keyphrase } = metadata;
+      const { source, author, hyperlink, answer, keyphrase, format } = metadata;
       
       // Insert problem into database
       await db.insert(problems).values({
@@ -68,6 +65,7 @@ async function main() {
         hyperlink: hyperlink || null,
         keyphrase: keyphrase || null, // Use keyphrase from metadata or null
         contentPath: filename, // Store filename as content path
+        format: format || "short-answer", // Use format from metadata or default to short-answer
         answer: answer || null,
         rating: 1200, // Default rating
         author: author || null,
