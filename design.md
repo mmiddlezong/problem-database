@@ -87,3 +87,8 @@ to end with some Next.js server actions or API endpoints that can actually inter
 ### Result
 I was able to meet the goals, but midway through I increased the scope of the project by deciding to use
 file storage for the storage of problems, which is more flexible and friendly with LaTeX.
+
+## Sprint 2
+
+### Goals
+For Sprint 2, I want to finish my file storage system for storing problems and have some way to turn problems into HTML that have rendered LaTeX. I also want to implement support for multiple choice questions and diagrams.
