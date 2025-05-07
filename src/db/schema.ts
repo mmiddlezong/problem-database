@@ -13,7 +13,7 @@ export const users = pgTable("users", {
     emailVerified: timestamp("emailVerified", { mode: "date" }),
     image: text("image"),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-    rating: integer("rating").default(1200),
+    rating: integer("rating").default(1200).notNull(),
 });
 
 export const accounts = pgTable(

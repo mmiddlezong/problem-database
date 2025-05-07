@@ -1,33 +1,30 @@
 import MathJaxProvider from "./components/mathjax-provider";
 import SignIn from "./components/sign-in";
-import ProblemSelector from "./components/problem-selector";
-import { getProblemTex } from "@/utils/problem-utils";
-import { db } from "@/db/drizzle";
-import { problems } from "@/db/schema";
-
-/**
- * Gets all available problems from the database
- * @returns An array of problem content paths (filenames)
- */
-async function getAvailableProblems() {
-    try {
-        // Query the database for all problems, returning only the contentPath field
-        const result = await db.select({ path: problems.contentPath })
-            .from(problems)
-            .orderBy(problems.createdAt);
-        
-        // Extract the contentPath values into a string array
-        return result.map(problem => problem.path);
-    } catch (error) {
-        console.error("Error fetching problems from database:", error);
-        return [];
-    }
-}
+import { getNextProblem, getProblemTex } from "@/utils/problem-utils";
+import { auth } from "@/auth";
 
 export default async function Home() {
-    const problemTex = await getProblemTex();
-    const availableProblems = await getAvailableProblems();
-    
+    const session = await auth();
+    if (!session?.user) {
+        return (
+            <>
+                <header className="p-4 bg-slate-800 shadow-md mb-6">
+                    <div className="container mx-auto flex justify-between items-center">
+                        <h1 className="text-xl font-bold text-white">Math Problem Database</h1>
+                        <SignIn />
+                    </div>
+                </header>
+                <div>please log in!</div>
+            </>
+        );
+    }
+
+    const nextProblem = await getNextProblem();
+    if (!nextProblem) {
+        return <div>No problem found.</div>;
+    }
+    const problemTex = await getProblemTex(nextProblem.contentPath);
+
     return (
         <>
             <header className="p-4 bg-slate-800 shadow-md mb-6">
@@ -36,14 +33,17 @@ export default async function Home() {
                     <SignIn />
                 </div>
             </header>
-            
+
             <main className="container mx-auto px-4">
                 <div className="bg-slate-900 shadow-lg rounded-lg p-6 mb-6">
                     <MathJaxProvider>
-                        <ProblemSelector 
-                            problems={availableProblems}
-                            initialProblemTex={problemTex}
-                        />
+                        <article className="prose prose-invert mx-auto lg:prose-lg p-6 bg-slate-800 rounded-lg border border-slate-600">
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: problemTex,
+                                }}
+                            />
+                        </article>
                     </MathJaxProvider>
                 </div>
             </main>
