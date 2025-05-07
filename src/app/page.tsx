@@ -1,5 +1,5 @@
-import MathJaxProvider from "./components/mathjax-provider";
 import SignIn from "./components/sign-in";
+import ProblemDisplay from "./components/problem-display";
 import { getNextProblem, getProblemTex } from "@/utils/problem-utils";
 import { auth } from "@/auth";
 
@@ -35,17 +35,7 @@ export default async function Home() {
             </header>
 
             <main className="container mx-auto px-4">
-                <div className="bg-slate-900 shadow-lg rounded-lg p-6 mb-6">
-                    <MathJaxProvider>
-                        <article className="prose prose-invert mx-auto lg:prose-lg p-6 bg-slate-800 rounded-lg border border-slate-600">
-                            <div
-                                dangerouslySetInnerHTML={{
-                                    __html: problemTex,
-                                }}
-                            />
-                        </article>
-                    </MathJaxProvider>
-                </div>
+                <ProblemDisplay problem={nextProblem} problemTex={problemTex} />
             </main>
         </>
     );
