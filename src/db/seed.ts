@@ -65,6 +65,67 @@ async function main() {
       
       // Extract fields from metadata
       const { source, author, hyperlink, answer, keyphrase, format } = metadata;
+
+      let predictedRating = 1200;
+
+      // Initial rating alignment:
+      // AoPS wiki rating 1 (AMC 10 early) is 1000, AoPS wiki rating 10 (hardest IMO) is 3000
+      
+      // For AMC problems, calculate rating based on problem number
+      if (source && source.match(/AMC\s+10[AB]\s+\d{4}\/\d+/)) {
+        // Extract problem number after the slash
+        const match = source.match(/\/(\d+)$/);
+        // Extract year from the source
+        const yearMatch = source.match(/AMC\s+10[AB]\s+(\d{4})/);
+        
+        if (match && match[1]) {
+          const problemNumber = parseInt(match[1], 10);
+          // AMC 10 problems typically increase in difficulty
+          // Problem #1 is around 1000, Problem #25 is around 1750
+          // Linear scaling between these points
+          predictedRating = 1000 + (problemNumber - 1) * (1750 - 1000) / 24;
+          
+          // Apply year-based rating adjustments
+          if (yearMatch && yearMatch[1]) {
+            const year = parseInt(yearMatch[1], 10);
+            if (year < 2000) {
+              predictedRating -= 100; // Subtract 100 for problems before 2000
+            } else if (year < 2010) {
+              predictedRating -= 50; // Subtract 50 for problems between 2000-2009
+            }
+          }
+          
+          console.log(`AMC problem ${source} - Problem #${problemNumber} - Rating: ${predictedRating.toFixed(0)}`);
+        }
+      }
+      if (source && source.match(/AMC\s+12[AB]\s+\d{4}\/\d+/)) {
+        // Extract problem number after the slash
+        const match = source.match(/\/(\d+)$/);
+        // Extract year from the source
+        const yearMatch = source.match(/AMC\s+12[AB]\s+(\d{4})/);
+        
+        if (match && match[1]) {
+          const problemNumber = parseInt(match[1], 10);
+          // AMC 12 problems typically increase in difficulty
+          // Problem #1 is around 1100, Problem #25 is around 2000
+          // Linear scaling between these points
+          predictedRating = 1100 + (problemNumber - 1) * (2000 - 1100) / 24;
+          
+          // Apply year-based rating adjustments
+          if (yearMatch && yearMatch[1]) {
+            const year = parseInt(yearMatch[1], 10);
+            if (year < 2000) {
+              predictedRating -= 100; // Subtract 100 for problems before 2000
+            } else if (year < 2010) {
+              predictedRating -= 50; // Subtract 50 for problems between 2000-2009
+            }
+          }
+          
+          console.log(`AMC problem ${source} - Problem #${problemNumber} - Rating: ${predictedRating.toFixed(0)}`);
+        }
+      }
+      
+      predictedRating = Math.round(predictedRating);
       
       // Create values object for insertion
       const problemValues = {
@@ -74,7 +135,7 @@ async function main() {
         contentPath: filePath, // Store filePath as content path
         format: format || "short-answer", // Use format from metadata or default to short-answer
         answer: answer || null,
-        rating: 1200, // Default rating
+        rating: predictedRating, // Use predicted rating based on problem source
         author: author || null,
         createdAt: new Date(),
       };
