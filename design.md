@@ -92,3 +92,12 @@ file storage for the storage of problems, which is more flexible and friendly wi
 
 ### Goals
 For Sprint 2, I want to finish my file storage system for storing problems and have some way to turn problems into HTML that have rendered LaTeX. I also want to implement support for multiple choice questions and diagrams.
+
+### Result
+I think I achieved everything I stated.
+
+## Sprint 3
+
+### Goals
+For Sprint 3, I want to create an interface where users are given problems at their level, they can submit answers,
+and their rating will update based on whether they get it correct.
