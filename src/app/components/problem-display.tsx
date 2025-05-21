@@ -1,5 +1,7 @@
+import { MathJax, MathJaxContext } from "better-react-mathjax";
 import MathJaxProvider from "./mathjax-provider";
 import { problems } from "@/db/schema";
+import { config, mathJaxConfig } from "../mathjax-config";
 
 interface ProblemDisplayProps {
   problem: {
@@ -29,15 +31,11 @@ export default function ProblemDisplay({ problem, problemTex }: ProblemDisplayPr
         </div>
       </div>
       
-      <MathJaxProvider>
+      <MathJaxContext config={mathJaxConfig}>
         <article className="prose prose-invert mx-auto lg:prose-lg p-6 bg-slate-800 rounded-lg border border-slate-600">
-          <div
-            dangerouslySetInnerHTML={{
-              __html: problemTex,
-            }}
-          />
+          <MathJax dangerouslySetInnerHTML={{__html: problemTex}}></MathJax>
         </article>
-      </MathJaxProvider>
+      </MathJaxContext>
     </div>
   );
 }

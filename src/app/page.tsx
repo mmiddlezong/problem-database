@@ -1,5 +1,7 @@
 import SignIn from "./components/sign-in";
 import ProblemDisplay from "./components/problem-display";
+import RatingDisplay from "./components/rating-display";
+import AnswerSubmission from "./components/answer-submission";
 import { getNextProblem, getProblemTex } from "@/utils/problem-utils";
 import { auth } from "@/auth";
 
@@ -35,7 +37,17 @@ export default async function Home() {
             </header>
 
             <main className="container mx-auto px-4">
-                <ProblemDisplay problem={nextProblem} problemTex={problemTex} />
+                <div className="flex flex-col md:flex-row gap-6">
+                    <div className="md:w-1/4">
+                        <RatingDisplay />
+                    </div>
+                    <div className="md:flex-1">
+                        <ProblemDisplay problem={nextProblem} problemTex={problemTex} />
+                        <div className="mt-6">
+                            <AnswerSubmission problemId={nextProblem.id} />
+                        </div>
+                    </div>
+                </div>
             </main>
         </>
     );

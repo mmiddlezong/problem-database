@@ -13,7 +13,14 @@ const API_BASE_URL = "http://localhost:3002";
 
 async function fetchAllTexFiles() {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/tex`);
+    // Add authorization header to secure this endpoint
+    const API_SECRET_KEY = process.env.API_SECRET_KEY || "secure-api-key-replace-in-production";
+    
+    const response = await fetch(`${API_BASE_URL}/api/tex`, {
+      headers: {
+        'Authorization': `Bearer ${API_SECRET_KEY}`
+      }
+    });
     const data = await response.json();
     return data.files;
   } catch (error) {
@@ -24,10 +31,14 @@ async function fetchAllTexFiles() {
 
 async function fetchTexMetadata(filePath: string) {
   try {
+    // Add authorization header to secure this endpoint
+    const API_SECRET_KEY = process.env.API_SECRET_KEY || "secure-api-key-replace-in-production";
+    
     const response = await fetch(`${API_BASE_URL}/api/tex`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_SECRET_KEY}`
       },
       body: JSON.stringify({ filePath: filePath })
     });

@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { db } from "@/db/drizzle";
 import { problems, problemAttempts, users } from "@/db/schema";
 import { eq, and, isNull, sql, gte, lte } from "drizzle-orm";
+import 'server-only';
 
 // API endpoint
 const API_BASE_URL = "http://localhost:3002";
@@ -24,15 +25,20 @@ export function processLatexContent(content: string): string {
 
 /**
  * Fetches a problem's LaTeX content by its path
+ * Note: This only fetches the problem statement, not the solution
  * @param filePath The path of the problem to fetch
  * @returns The LaTeX content of the problem
  */
 export async function getProblemTex(filePath: string) {
     try {
+        // Add authorization header to secure this endpoint
+        const API_SECRET_KEY = process.env.API_SECRET_KEY || "secure-api-key-replace-in-production";
+        
         const response = await fetch(`${API_BASE_URL}/api/tex/problem`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${API_SECRET_KEY}`
             },
             body: JSON.stringify({ filePath: filePath }),
         });
@@ -52,15 +58,20 @@ export async function getProblemTex(filePath: string) {
 
 /**
  * Fetches a problem's metadata and bodies by its path
+ * SECURITY: This function should only be called from server-side code as it contains solutions.
  * @param filePath The path of the problem to fetch
  * @returns The full object for the problem
  */
 export async function getProblemFull(filePath: string) {
     try {
+        // Add authorization header to secure this endpoint
+        const API_SECRET_KEY = process.env.API_SECRET_KEY || "secure-api-key-replace-in-production";
+        
         const response = await fetch(`${API_BASE_URL}/api/tex`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${API_SECRET_KEY}`
             },
             body: JSON.stringify({ filePath: filePath }),
         });
