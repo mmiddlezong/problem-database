@@ -114,6 +114,7 @@ export async function POST(request: Request) {
         isCorrect: isCorrect,
         ratingChange: ratingChange,
         newRating: newUserRating,
+        correctAnswer: correctAnswer,
         content: problemFull,
     });
 }

@@ -17,6 +17,7 @@ export default function AnswerSubmission({ problemId, onRatingUpdate, onNextProb
     const [isCorrect, setIsCorrect] = useState<boolean>(false);
     const [ratingChange, setRatingChange] = useState<number>(0);
     const [newRating, setNewRating] = useState<number>(0);
+    const [correctAnswer, setCorrectAnswer] = useState<string>("");
     
     // Reset state when problemId changes (new problem loaded)
     useEffect(() => {
@@ -26,6 +27,7 @@ export default function AnswerSubmission({ problemId, onRatingUpdate, onNextProb
         setIsCorrect(false);
         setRatingChange(0);
         setNewRating(0);
+        setCorrectAnswer("");
     }, [problemId]);
     
     async function submitAnswer(formData: FormData) {
@@ -45,6 +47,7 @@ export default function AnswerSubmission({ problemId, onRatingUpdate, onNextProb
         setIsCorrect(json.isCorrect || false);
         setRatingChange(json.ratingChange || 0);
         setNewRating(json.newRating || 0);
+        setCorrectAnswer(json.correctAnswer || "");
         
         // Update the parent component's rating display
         if (onRatingUpdate && json.newRating) {
@@ -80,12 +83,16 @@ export default function AnswerSubmission({ problemId, onRatingUpdate, onNextProb
                                 <span className="text-blue-400 font-semibold mr-3">Your Answer:</span>
                                 <span className="text-white font-mono">{yourAnswer}</span>
                             </div>
+                            <div>
+                                <span className="text-green-400 font-semibold mr-3">Correct Answer:</span>
+                                <span className="text-white font-mono">{correctAnswer}</span>
+                            </div>
                             <div className="flex items-center gap-4">
                                 <div className={`font-semibold ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
                                     {isCorrect ? '✓ Correct' : '✗ Incorrect'}
                                 </div>
                                 <div className="text-gray-300">
-                                    Rating: {ratingChange > 0 ? '+' : ''}{ratingChange} → {newRating}
+                                    Rating: {newRating - ratingChange} → {newRating}
                                 </div>
                             </div>
                         </div>
