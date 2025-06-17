@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import MathJaxProvider from "./mathjax-provider";
+import { useState } from "react";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 
 type AnswerSubmissionProps = {
