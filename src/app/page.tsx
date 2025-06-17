@@ -32,7 +32,7 @@ export default async function Home() {
             <header className="p-4 bg-slate-800 shadow-md mb-6">
                 <div className="container mx-auto flex justify-between items-center">
                     <h1 className="text-xl font-bold text-white">Math Problem Database</h1>
-                    <SignIn />
+                    Signed in as {session.user.email}
                 </div>
             </header>
 
