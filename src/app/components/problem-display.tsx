@@ -1,7 +1,6 @@
 import { MathJax, MathJaxContext } from "better-react-mathjax";
-import MathJaxProvider from "./mathjax-provider";
 import { problems } from "@/db/schema";
-import { config, mathJaxConfig } from "../mathjax-config";
+import { mathJaxConfig } from "../mathjax-config";
 
 interface ProblemDisplayProps {
   problem: {

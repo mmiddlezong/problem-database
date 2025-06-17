@@ -1,9 +1,11 @@
 import SignIn from "./components/sign-in";
-import ProblemDisplay from "./components/problem-display";
+import ProblemWrapper from "./components/problem-wrapper";
 import RatingDisplay from "./components/rating-display";
-import AnswerSubmission from "./components/answer-submission";
 import { getNextProblem, getProblemTex } from "@/utils/problem-utils";
 import { auth } from "@/auth";
+import { db } from "@/db/drizzle";
+import { users } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export default async function Home() {
     const session = await auth();
@@ -21,11 +23,24 @@ export default async function Home() {
         );
     }
 
-    const nextProblem = await getNextProblem();
-    if (!nextProblem) {
-        return <div>No problem found.</div>;
+    // Get the user's rating from the database
+    const userResult = await db
+        .select({ rating: users.rating })
+        .from(users)
+        .where(eq(users.email, session.user.email!))
+        .limit(1);
+
+    if (userResult.length === 0) {
+        return <div>User not found</div>;
     }
-    const problemTex = await getProblemTex(nextProblem.contentPath);
+
+    const initialRating = userResult[0].rating;
+
+    const nextProblem = await getNextProblem();
+    let problemTex = "";
+    if (nextProblem) {
+        problemTex = await getProblemTex(nextProblem.contentPath);
+    }
 
     return (
         <>
@@ -37,17 +52,25 @@ export default async function Home() {
             </header>
 
             <main className="container mx-auto px-4">
-                <div className="flex flex-col md:flex-row gap-6">
-                    <div className="md:w-1/4">
-                        <RatingDisplay />
-                    </div>
-                    <div className="md:flex-1">
-                        <ProblemDisplay problem={nextProblem} problemTex={problemTex} />
-                        <div className="mt-6">
-                            <AnswerSubmission problemId={nextProblem.id} />
+                {nextProblem ? (
+                    <ProblemWrapper 
+                        problem={nextProblem} 
+                        problemTex={problemTex} 
+                        initialRating={initialRating}
+                    />
+                ) : (
+                    <div className="flex flex-col md:flex-row gap-6">
+                        <div className="md:w-1/4">
+                            <RatingDisplay rating={initialRating} />
+                        </div>
+                        <div className="md:flex-1">
+                            <div className="bg-slate-800 shadow-md rounded-lg p-6 text-center">
+                                <h2 className="text-2xl font-bold text-white mb-4">Congratulations!</h2>
+                                <p className="text-gray-300">You have finished all the problems in our database.</p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
             </main>
         </>
     );
