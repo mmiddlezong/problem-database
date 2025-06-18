@@ -71,9 +71,11 @@ export async function POST(request: Request) {
     // (ignoring case, whitespace, etc.) depending on the problem type
     const isCorrect = userAnswer?.trim().toLowerCase() === correctAnswer?.trim().toLowerCase();
     
-    // For a simple implementation, use a fixed rating change
-    // In a real ELO system, you would calculate this based on user and problem ratings
-    const ratingChange = isCorrect ? 10 : -10;
+    // Calculate ELO rating change with scaling to keep changes around ±10
+    const expectedScore = 1 / (1 + Math.pow(10, (problemRating - userRating) / 400));
+    const actualScore = isCorrect ? 1 : 0;
+    const baseChange = 10; // Target rating change for balanced matches
+    const ratingChange = Math.round(baseChange * 2 * (actualScore - expectedScore));
     
     // Update user rating
     const newUserRating = userRating + ratingChange;
