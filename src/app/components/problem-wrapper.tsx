@@ -6,7 +6,13 @@ import AnswerSubmission from "./answer-submission";
 import RatingDisplay from "./rating-display";
 
 type ProblemWrapperProps = {
-    problem: any;
+    problem: {
+        id: string;
+        source: string | null;
+        contentPath: string;
+        format: "short-answer" | "proof" | "multiple-choice";
+        rating: number | null;
+    };
     problemTex: string;
     initialRating: number;
 };
